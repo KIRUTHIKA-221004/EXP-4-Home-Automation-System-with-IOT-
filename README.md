@@ -15,9 +15,10 @@ Jumper Wires
 
 # Circuit Diagram:
 
+<img width="1167" height="628" alt="image" src="https://github.com/user-attachments/assets/eacb5907-ac0f-4ab4-ae91-a9378e4281e1" />
+
 
 # Theory: 
-
 
 Blynk is an IoT platform for iOS or Android smartphones that is used to control Arduino, Raspberry Pi and NodeMCU via the Internet. This application is used to create a graphical interface or human machine interface (HMI) by compiling and providing the appropriate address on the available widgets.In this experiment we use ESP8266 to control a 220-volt lamp from a web server. But you can also use the same procedure to control fans, lights, AC, or other electrical devices that you want to control remotely.
 Relay is an electromechanical device that is used as a switch between high current and low current devices. When the coil in the relay gets fully energized, the contact shifts from the normally open position to the normally closed position. Light bulbs usually operate on 120V or 220V AC power supply. We cannot interface these AC loads directly with the ESP8266 development board, or it will damage the board. We have to use a relay between the ESP8266 and the lamp. 
@@ -26,6 +27,106 @@ When we apply an active high signal to the signal pin of the relay module from a
 
 
 # Program:
+	#include<Servo.h>
+	const int pingPin = 7;
+	int servoPin = 8;
+	
+	Servo servo1;
+	
+	void setup() {
+	  // initialize serial communication:
+	  Serial.begin(9600);
+	  servo1.attach(servoPin);
+	  pinMode(2,INPUT);
+	  pinMode(4,OUTPUT);
+	  pinMode(11,OUTPUT);
+	  pinMode(12,OUTPUT);
+	  pinMode(13,OUTPUT);
+	  pinMode(A0,INPUT);
+	  digitalWrite(2,LOW);
+	  digitalWrite(11,HIGH);
+	  
+	}
+	
+	void loop() {
+	  
+	  long duration, inches, cm;
+	
+	  pinMode(pingPin, OUTPUT);
+	  digitalWrite(pingPin, LOW);
+	  delayMicroseconds(2);
+	  digitalWrite(pingPin, HIGH);
+	  delayMicroseconds(5);
+	  digitalWrite(pingPin, LOW);
+	
+	  // The same pin is used to read the signal from the PING))): a HIGH pulse
+	  // whose duration is the time (in microseconds) from the sending of the ping
+	  // to the reception of its echo off of an object.
+	  pinMode(pingPin, INPUT);
+	  duration = pulseIn(pingPin, HIGH);
+	
+	  // convert the time into a distance
+	  inches = microsecondsToInches(duration);
+	  cm = microsecondsToCentimeters(duration);
+	
+	  //Serial.print(inches);
+	  //Serial.print("in, ");
+	  //Serial.print(cm);
+	  //Serial.print("cm");
+	  //Serial.println();
+	  //delay(100);
+	  
+	  servo1.write(0);
+	  
+	  if(cm < 40)
+	  {
+	    servo1.write(90);
+	    delay(2000);
+	  }
+	  else
+	  {
+	    servo1.write(0);
+	  }
+	  
+	  // PIR with LED starts
+	  int pir = digitalRead(2);
+	  
+	  if(pir == HIGH)
+	  {
+	    digitalWrite(4,HIGH);
+	    delay(1000);
+	  }
+	  else if(pir == LOW)
+	  {
+	    digitalWrite(4,LOW);
+	  }
+	  
+	  //temp with fan
+	  float value=analogRead(A0);
+	  float temperature=value*0.1428;
+	  
+	  Serial.println("temperature");
+	  Serial.println(temperature);
+	  
+	  if(temperature > 20)
+	  {
+	    digitalWrite(12,HIGH);
+	    digitalWrite(13,LOW);
+	  }
+	  else
+	  {
+	    digitalWrite(12,LOW);
+	    digitalWrite(13,LOW);
+	  }
+	}
+	
+	long microsecondsToInches(long microseconds) {
+	  return microseconds / 74 / 2;
+	}
+	
+	long microsecondsToCentimeters(long microseconds) {
+	  return microseconds / 29 / 2;
+	}
 
 
 
@@ -48,5 +149,9 @@ When we apply an active high signal to the signal pin of the relay module from a
 
 # Output:
 
+https://github.com/user-attachments/assets/c707a9cc-ceca-454f-a690-cf589f3273fb
+
 # Result:
+
+Thus the experiment of Home-Automation-System-with-IOT is successfully verified.
 
